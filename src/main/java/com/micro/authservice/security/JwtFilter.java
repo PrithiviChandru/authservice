@@ -23,7 +23,8 @@ public class JwtFilter extends OncePerRequestFilter {
             "/api/auth/reset-password",
             "/api/auth/verify-email",
             "/api/auth/resent-verification",
-            "/api/auth/refresh-token");
+            "/api/auth/refresh-token",
+            "/h2-console");
 
     @Autowired
     private JwtService jwtService;

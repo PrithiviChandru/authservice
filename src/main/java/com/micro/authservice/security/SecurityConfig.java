@@ -29,7 +29,8 @@ public class SecurityConfig {
                                 "/api/auth/resend-verification",
                                 "/api/auth/refresh-token",
                                 "/v3/api-docs/**",
-                                "/swagger-ui/**"
+                                "/swagger-ui/**",
+                                "/h2-console/**"
                         ).permitAll()
                         .anyRequest()
                         .authenticated()

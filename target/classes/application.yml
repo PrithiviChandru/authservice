@@ -1,21 +1,27 @@
 #Server Port
-#server:
-#  port: 8081
 server:
-  port=${PORT:8080}:
+  port: 8081
+#server:
+#  port=${PORT:8080}:
 
 #Database Credentials
 spring:
   application:
     name: authservice
   datasource:
-    url: jdbc:mysql://localhost:3306/auth_db
-    username: root
-    password: 1234
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
   jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
-    show-sql: true
+#    show-sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
 
 #Token Properties
 jwt:
