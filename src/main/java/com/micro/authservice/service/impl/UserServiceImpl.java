@@ -1,0 +1,77 @@
+package com.micro.authservice.service.impl;
+
+import com.micro.authservice.dto.request.UpdateProfileRequest;
+import com.micro.authservice.dto.response.ApiResponse;
+import com.micro.authservice.dto.UserDetailsDto;
+import com.micro.authservice.entity.User;
+import com.micro.authservice.exception.ApiException;
+import com.micro.authservice.repository.UserRepository;
+import com.micro.authservice.security.JwtService;
+import com.micro.authservice.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
+    private final UserRepository userRepository;
+    private final JwtService jwtService;
+
+    @Override
+    public ApiResponse<List<UserDetailsDto>> getAllUsers() {
+        List<User> userList = userRepository.findAll();
+        List<UserDetailsDto> userDetailsList = userList.stream().map(user -> mapToUserDetails(user)).collect(Collectors.toUnmodifiableList());
+        return ApiResponse.success("User list fetched", userDetailsList);
+    }
+
+    @Override
+    public ApiResponse<UserDetailsDto> getUserById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> ApiException.notFound("Entity not found"));
+        UserDetailsDto userDetails = mapToUserDetails(user);
+        return ApiResponse.success("User date fetched", userDetails);
+    }
+
+    @Override
+    public ApiResponse<UserDetailsDto> updateProfile(String accessToken, UpdateProfileRequest request) {
+        String email = jwtService.extractEmail(accessToken);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> ApiException.unauthorized("User not found"));
+
+        if (null != request.firstName())
+            user.setFirstName(request.firstName());
+        if (null != request.lastName())
+            user.setLastName(request.lastName());
+        if (null != request.phone())
+            user.setPhone(request.phone());
+        if (null != request.timeZone())
+            user.setTimeZone(request.timeZone());
+        userRepository.save(user);
+
+        UserDetailsDto userDetails = mapToUserDetails(user);
+        return ApiResponse.success("Profile updated successfully", userDetails);
+    }
+
+    @Override
+    public ApiResponse<String> deleteById(Long id) {
+        userRepository.deleteById(id);
+        return ApiResponse.success("User deletion successful", "Deleted");
+    }
+
+    private UserDetailsDto mapToUserDetails(User user) {
+        return UserDetailsDto.builder()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .role(user.getRole())
+                .timeZone(user.getTimeZone())
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
+                .build();
+    }
+
+}
