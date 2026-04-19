@@ -1,16 +1,18 @@
 package com.micro.authservice.service;
 
 import com.micro.authservice.dto.request.*;
-import com.micro.authservice.dto.response.ApiResponse;
-import com.micro.authservice.dto.response.LoginResponse;
-import com.micro.authservice.dto.response.TokenValidationResponse;
+import com.micro.authservice.dto.response.*;
 
 public interface AuthService {
-    ApiResponse<String> register(RegisterRequest request);
+    ApiResponse<RegisterResponse> register(RegisterRequest request);
+
+    ApiResponse<VerifyEmailResponse> verifyEmail(VerifyEmailRequest request);
+
+    ApiResponse<ResendVerificationResponse> resentVerification(ResentVerificationRequest request);
 
     ApiResponse<LoginResponse> login(LoginRequest request);
 
-    ApiResponse<Boolean> logout(String accessToken);
+    ApiResponse<LogoutResponse> logout(String accessToken);
 
     ApiResponse<LoginResponse> refreshToken(RefreshTokenRequest request);
 
@@ -21,8 +23,4 @@ public interface AuthService {
     ApiResponse<Boolean> resetPassword(ResetPasswordRequest request);
 
     ApiResponse<TokenValidationResponse> validateToken(String accessToken);
-
-    ApiResponse<Boolean> verifyEmail(String verificationToken);
-
-    ApiResponse<String> resentVerification(ResentVerificationRequest request);
 }

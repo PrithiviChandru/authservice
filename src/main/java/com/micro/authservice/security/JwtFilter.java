@@ -1,6 +1,5 @@
 package com.micro.authservice.security;
 
-import com.micro.authservice.exception.ApiException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,13 +17,12 @@ import java.util.List;
 public class JwtFilter extends OncePerRequestFilter {
     private static final List<String> PUBLIC_ENDPOINTS = List.of(
             "/api/auth/register",
+            "/api/auth/verify-email",
+            "/api/auth/resent-verification",
             "/api/auth/login",
             "/api/auth/forgot-password",
             "/api/auth/reset-password",
-            "/api/auth/verify-email",
-            "/api/auth/resent-verification",
-            "/api/auth/refresh-token",
-            "/h2-console");
+            "/api/auth/refresh-token");
 
     @Autowired
     private JwtService jwtService;

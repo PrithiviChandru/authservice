@@ -22,15 +22,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/auth/register",
+                                "/api/auth/verify-email",
+                                "/api/auth/resend-verification",
                                 "/api/auth/login",
                                 "/api/auth/forgot-password",
                                 "/api/auth/reset-password",
-                                "/api/auth/verify-email",
-                                "/api/auth/resend-verification",
                                 "/api/auth/refresh-token",
                                 "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/h2-console/**"
+                                "/swagger-ui/**"
                         ).permitAll()
                         .anyRequest()
                         .authenticated()

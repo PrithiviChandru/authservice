@@ -1,10 +1,8 @@
 package com.micro.authservice.service.impl;
 
-import com.micro.authservice.dto.response.ApiResponse;
+import com.micro.authservice.dto.response.*;
 import com.micro.authservice.dto.UserDetailsDto;
 import com.micro.authservice.dto.request.*;
-import com.micro.authservice.dto.response.LoginResponse;
-import com.micro.authservice.dto.response.TokenValidationResponse;
 import com.micro.authservice.entity.User;
 import com.micro.authservice.enums.Role;
 import com.micro.authservice.exception.ApiException;
@@ -29,22 +27,71 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final TokenBlackListService tokenBlackListService;
 
-    public ApiResponse<String> register(RegisterRequest request) {
+    public ApiResponse<RegisterResponse> register(RegisterRequest request) {
         if (userRepository.findByEmail(request.email()).isPresent()) {
             throw ApiException.conflict("Email already exists");
         } else {
             Utils.validTimeZone(request.timeZone());
             User user = mapToUser(request);
-
             String verificationToken = UUID.randomUUID().toString();
+            LocalDateTime verificationTokenExpiry = LocalDateTime.now().plusMinutes(30);
+
             user.setVerified(false);
             user.setVerificationToken(verificationToken);
-            user.setVerificationTokenExpiry(LocalDateTime.now().plusMinutes(30));
-
+            user.setVerificationTokenExpiry(verificationTokenExpiry);
             User saved = userRepository.save(user);
-            UserDetailsDto userDetails = mapToUserDetails(saved);
-            return ApiResponse.success("User registered, Verify email", verificationToken);
+
+            RegisterResponse response = new RegisterResponse(
+                    verificationToken,
+                    verificationTokenExpiry,
+                    "User registered successfully. Please verify your email using the provided token before it expires."
+            );
+            return ApiResponse.success("User registration successful", response);
         }
+    }
+
+    @Override
+    public ApiResponse<VerifyEmailResponse> verifyEmail(VerifyEmailRequest request) {
+        User user = userRepository.findByVerificationToken(request.verifyToken())
+                .orElseThrow(() -> ApiException.notFound("Invalid token"));
+
+        if (user.isVerified())
+            throw ApiException.badRequest("Email already verified");
+
+        if (user.getVerificationTokenExpiry().isBefore(LocalDateTime.now()))
+            throw ApiException.notFound("Verify Token expired");
+
+        user.setVerified(true);
+        user.setVerificationToken(null);
+        user.setVerificationTokenExpiry(null);
+        userRepository.save(user);
+        VerifyEmailResponse response = new VerifyEmailResponse(
+                true,
+                "Email verified successfully. Your account is now active."
+        );
+        return ApiResponse.success("Email verification successful", response);
+    }
+
+    @Override
+    public ApiResponse<ResendVerificationResponse> resentVerification(ResentVerificationRequest request) {
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> ApiException.badRequest("User not found"));
+
+        if (user.isVerified())
+            throw ApiException.badRequest("Email already verified");
+
+        String verificationToken = UUID.randomUUID().toString();
+        LocalDateTime verificationTokenExpiry = LocalDateTime.now().plusMinutes(30);
+        user.setVerificationToken(verificationToken);
+        user.setVerificationTokenExpiry(verificationTokenExpiry);
+        userRepository.save(user);
+
+        ResendVerificationResponse response = new ResendVerificationResponse(
+                verificationToken,
+                verificationTokenExpiry,
+                "A new verification token has been generated. Please verify your email before it expires."
+        );
+        return ApiResponse.success("Verification token resent", response);
     }
 
     public ApiResponse<LoginResponse> login(LoginRequest request) {
@@ -69,7 +116,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ApiResponse<Boolean> logout(String accessToken) {
+    public ApiResponse<LogoutResponse> logout(String accessToken) {
         String email = jwtService.extractEmail(accessToken);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> ApiException.unauthorized("User not found"));
@@ -79,7 +126,8 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
 
         tokenBlackListService.blacklistToken(accessToken);
-        return ApiResponse.success("Logout successful", true);
+        LogoutResponse response = new LogoutResponse(true);
+        return ApiResponse.success("Logout successful", response);
     }
 
     @Override
@@ -163,42 +211,6 @@ public class AuthServiceImpl implements AuthService {
             throw ApiException.unauthorized("Token expired or invalid");
         }
     }
-
-    @Override
-    public ApiResponse<Boolean> verifyEmail(String verificationToken) {
-        User user = userRepository.findByVerificationToken(verificationToken)
-                .orElseThrow(() -> ApiException.badRequest("Invalid token"));
-
-        if (user.isVerified())
-            throw ApiException.badRequest("Email already verified");
-
-        if (user.getVerificationTokenExpiry().isBefore(LocalDateTime.now()))
-            throw ApiException.badRequest("Token expired");
-
-        user.setVerified(true);
-        user.setVerificationToken(null);
-        user.setVerificationTokenExpiry(null);
-        userRepository.save(user);
-
-        return ApiResponse.success("Email verification successful", true);
-    }
-
-    @Override
-    public ApiResponse<String> resentVerification(ResentVerificationRequest request) {
-        User user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> ApiException.badRequest("User not found"));
-
-        if (user.isVerified())
-            throw ApiException.badRequest("Email already verified");
-
-        String verificationToken = UUID.randomUUID().toString();
-        user.setVerificationToken(verificationToken);
-        user.setVerificationTokenExpiry(LocalDateTime.now().plusMinutes(30));
-        userRepository.save(user);
-
-        return ApiResponse.success("Verification token resent", verificationToken);
-    }
-
 
     private UserDetailsDto mapToUserDetails(User user) {
         return UserDetailsDto.builder()
