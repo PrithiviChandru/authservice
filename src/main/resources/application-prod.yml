@@ -1,23 +1,23 @@
-##Server Port
-#server:
-#  port: ${PORT:8080}
-#
-##Database Credentials
-#spring:
-#  application:
-#    name: authservice
-#  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://${MYSQL_ADDON_HOST}:${MYSQL_ADDON_PORT}/${MYSQL_ADDON_DB}?useSSL=false&serverTimeZone=UTC
-#    username: ${MYSQL_ADDON_USER}
-#    password: ${MYSQL_ADDON_PASSWORD}
-#  jpa:
-#    database-platform: org.hibernate.dialect.MySQLDialect
-#    hibernate:
-#      ddl-auto: update
-#    show-sql: false
-#
-##Token Properties
-#jwt:
-#  secret: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-#  expiration: 300000 # 5 mins
+#Server Port
+server:
+  port: ${PORT:8080}
+
+#Database Credentials
+spring:
+  application:
+    name: authservice
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_ADDON_HOST}:${MYSQL_ADDON_PORT}/${MYSQL_ADDON_DB}?useSSL=false&serverTimeZone=UTC
+    username: ${MYSQL_ADDON_USER}
+    password: ${MYSQL_ADDON_PASSWORD}
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+#Token Properties
+jwt:
+  secret: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  expiration: 300000 # 5 mins
