@@ -1,5 +1,5 @@
 D:\java\idea\microservices\authservice\src\main\java\com\micro\authservice\AuthServiceApplication.java
-D:\java\idea\microservices\authservice\src\main\java\com\micro\authservice\config\SwaggerConfig.java
+D:\java\idea\microservices\authservice\src\main\java\com\micro\authservice\config\OpenApiConfig.java
 D:\java\idea\microservices\authservice\src\main\java\com\micro\authservice\constants\Constants.java
 D:\java\idea\microservices\authservice\src\main\java\com\micro\authservice\controller\AuthController.java
 D:\java\idea\microservices\authservice\src\main\java\com\micro\authservice\controller\UserController.java
