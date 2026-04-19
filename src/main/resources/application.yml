@@ -1,6 +1,6 @@
 #Server Port
-server:
-  port: ${PORT:8080}
+#server:
+#  port: ${PORT:8080}
 
 #Database Credentials
 spring:
