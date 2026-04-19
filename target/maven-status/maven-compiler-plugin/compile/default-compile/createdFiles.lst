@@ -1,3 +1,4 @@
+com\micro\authservice\config\OpenApiConfig.class
 com\micro\authservice\security\JwtFilter.class
 com\micro\authservice\controller\AuthController.class
 com\micro\authservice\dto\response\RegisterResponse.class
@@ -26,7 +27,6 @@ com\micro\authservice\service\impl\AuthServiceImpl.class
 com\micro\authservice\dto\request\UpdateProfileRequest.class
 com\micro\authservice\exception\GlobalExceptionHandler.class
 com\micro\authservice\entity\User$UserBuilder.class
-com\micro\authservice\config\SwaggerConfig.class
 com\micro\authservice\enums\Role.class
 com\micro\authservice\dto\request\RegisterRequest.class
 com\micro\authservice\security\TokenBlackListService.class
