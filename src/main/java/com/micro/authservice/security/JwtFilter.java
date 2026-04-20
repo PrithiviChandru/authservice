@@ -45,8 +45,8 @@ public class JwtFilter extends OncePerRequestFilter {
         else {
             if (null == authHeader || !authHeader.startsWith("Bearer ")) {
 //                if (path.contains("swagger") || path.contains("v3-docs")) {
-                    filterChain.doFilter(request, response);
-                    return;
+                filterChain.doFilter(request, response);
+                return;
 //                }
 //                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 //                response.getWriter().write("Authorization header missing");

@@ -119,14 +119,17 @@ public class AuthServiceImpl implements AuthService {
     public ApiResponse<LogoutResponse> logout(String accessToken) {
         String email = jwtService.extractEmail(accessToken);
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> ApiException.unauthorized("User not found"));
+                .orElseThrow(() -> ApiException.notFound("User not found"));
 
         user.setRefreshToken(null);
         user.setRefreshTokenExpiry(null);
         userRepository.save(user);
 
         tokenBlackListService.blacklistToken(accessToken);
-        LogoutResponse response = new LogoutResponse(true);
+        LogoutResponse response = new LogoutResponse(
+                true,
+                "Logged out successfully"
+        );
         return ApiResponse.success("Logout successful", response);
     }
 

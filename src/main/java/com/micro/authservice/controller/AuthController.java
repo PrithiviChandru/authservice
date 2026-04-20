@@ -2,14 +2,13 @@ package com.micro.authservice.controller;
 
 import com.micro.authservice.dto.request.*;
 import com.micro.authservice.dto.response.*;
-import com.micro.authservice.schema.ErrorResponseSchema;
-import com.micro.authservice.schema.RegisterResponseSchema;
-import com.micro.authservice.schema.VerifyEmailResponseSchema;
+import com.micro.authservice.schema.*;
 import com.micro.authservice.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +53,8 @@ public class AuthController {
     public ResponseEntity<ApiResponse<RegisterResponse>> register(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "User registration request",
-                    required = true
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = RegisterRequest.class))
             )
             @RequestBody @Valid RegisterRequest request
     ) {
@@ -88,7 +88,11 @@ public class AuthController {
     public ResponseEntity<ApiResponse<VerifyEmailResponse>> verifyEmail(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Verify email request",
-                    required = true
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(implementation = VerifyEmailRequest.class)
+                    )
+
             )
             @RequestBody VerifyEmailRequest request
     ) {
@@ -120,20 +124,67 @@ public class AuthController {
     public ResponseEntity<ApiResponse<ResendVerificationResponse>> resentVerification(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Resent verification request",
-                    required = true
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(implementation = ResentVerificationRequest.class)
+                    )
+
             )
             @Valid @RequestBody ResentVerificationRequest request
     ) {
         return ResponseEntity.ok(authService.resentVerification(request));
     }
 
+    @Operation(
+            summary = "User Login",
+            description = "Authenticates user credentials and returns JWT access token"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Login successful",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = LoginResponseSchema.class)
+                    )
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "401",
+                    description = "Invalid email or password",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseSchema.class))
+            ),
+    })
     @PostMapping(value = "/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "User login credentials",
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(implementation = LoginRequest.class)
+                    )
+            )
             @RequestBody LoginRequest request
     ) {
         return ResponseEntity.ok(authService.login(request));
     }
 
+    @Operation(
+            summary = "User Logout",
+            description = "Logs out the user by invalidating the JWT token"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Logout successful",
+                    content = @Content(schema = @Schema(implementation = LogoutResponseSchema.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "401",
+                    description = "Unauthorized",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseSchema.class))
+            )
+    })
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<LogoutResponse>> logout(
             Authentication authentication

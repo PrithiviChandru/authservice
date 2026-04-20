@@ -9,4 +9,5 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class LogoutResponse implements Serializable {
     private boolean success;
+    private String message;
 }
