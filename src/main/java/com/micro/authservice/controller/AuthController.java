@@ -92,7 +92,6 @@ public class AuthController {
                     content = @Content(
                             schema = @Schema(implementation = VerifyEmailRequest.class)
                     )
-
             )
             @RequestBody VerifyEmailRequest request
     ) {
@@ -193,6 +192,28 @@ public class AuthController {
         return ResponseEntity.ok(authService.logout(accessToken));
     }
 
+    @Operation(
+            summary = "Validate JWT token",
+            description = "Validates the provided JWT token and returns its status"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Token validation result",
+                    content = @Content(schema = @Schema(implementation = TokenValidationResponseSchema.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "Token missing or invalid",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseSchema.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "401",
+                    description = "Unauthorized (if token format is incorrect)",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseSchema.class))
+            )
+    })
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/validate-token")
     public ResponseEntity<ApiResponse<TokenValidationResponse>> validateToken(
             Authentication authentication
@@ -201,8 +222,65 @@ public class AuthController {
         return ResponseEntity.ok(authService.validateToken(accessToken));
     }
 
+    @Operation(
+            summary = "Refresh JWT token",
+            description = "Generates a new access token using a valid refresh token"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Token refreshed successfully",
+                    content = @Content(schema = @Schema(implementation = RefreshTokenResponseSchema.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid refresh token",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseSchema.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "401",
+                    description = "Refresh token expired or unauthorized",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseSchema.class))
+            )
+    })
+    @PostMapping("/refresh-token")
+    public ResponseEntity<ApiResponse<LoginResponse>> refreshToken(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Refresh token request",
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(implementation = RefreshTokenRequest.class)
+                    )
+            )
+            @Valid @RequestBody RefreshTokenRequest request
+    ) {
+        return ResponseEntity.ok(authService.refreshToken(request));
+    }
+
+    @Operation(
+            summary = "Change user password",
+            description = "Allows authenticated user to change password using old password"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Password changed successfully",
+                    content = @Content(schema = @Schema(implementation = ChangePasswordResponseSchema.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid request or wrong old password",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseSchema.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "401",
+                    description = "Unauthorized - invalid or missing token",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseSchema.class))
+            )
+    })
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/change-password")
-    public ResponseEntity<ApiResponse<Boolean>> changePassword(
+    public ResponseEntity<ApiResponse<ChangePasswordResponse>> changePassword(
             @RequestBody ChangePasswordRequest request,
             Authentication authentication
     ) {
@@ -224,10 +302,4 @@ public class AuthController {
         return ResponseEntity.ok(authService.resetPassword(request));
     }
 
-    @PostMapping("/refresh-token")
-    public ResponseEntity<ApiResponse<LoginResponse>> refreshToken(
-            @Valid @RequestBody RefreshTokenRequest request
-    ) {
-        return ResponseEntity.ok(authService.refreshToken(request));
-    }
 }

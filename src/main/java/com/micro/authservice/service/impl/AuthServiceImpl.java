@@ -64,6 +64,7 @@ public class AuthServiceImpl implements AuthService {
         user.setVerified(true);
         user.setVerificationToken(null);
         user.setVerificationTokenExpiry(null);
+        user.setUpdatedAt(Instant.now());
         userRepository.save(user);
         VerifyEmailResponse response = new VerifyEmailResponse(
                 true,
@@ -84,6 +85,7 @@ public class AuthServiceImpl implements AuthService {
         LocalDateTime verificationTokenExpiry = LocalDateTime.now().plusMinutes(30);
         user.setVerificationToken(verificationToken);
         user.setVerificationTokenExpiry(verificationTokenExpiry);
+        user.setUpdatedAt(Instant.now());
         userRepository.save(user);
 
         ResendVerificationResponse response = new ResendVerificationResponse(
@@ -107,6 +109,7 @@ public class AuthServiceImpl implements AuthService {
             String refreshToken = UUID.randomUUID().toString();
             user.setRefreshToken(refreshToken);
             user.setRefreshTokenExpiry(LocalDateTime.now().plusDays(7));
+            user.setUpdatedAt(Instant.now());
             userRepository.save(user);
 
             UserDetailsDto userDetails = mapToUserDetails(user);
@@ -123,6 +126,7 @@ public class AuthServiceImpl implements AuthService {
 
         user.setRefreshToken(null);
         user.setRefreshTokenExpiry(null);
+        user.setUpdatedAt(Instant.now());
         userRepository.save(user);
 
         tokenBlackListService.blacklistToken(accessToken);
@@ -131,72 +135,6 @@ public class AuthServiceImpl implements AuthService {
                 "Logged out successfully"
         );
         return ApiResponse.success("Logout successful", response);
-    }
-
-    @Override
-    public ApiResponse<LoginResponse> refreshToken(RefreshTokenRequest request) {
-        User user = userRepository.findByRefreshToken(request.refreshToken())
-                .orElseThrow(() -> ApiException.unauthorized("Invalid refresh token"));
-
-        if (user.getRefreshTokenExpiry().isBefore(LocalDateTime.now()))
-            throw ApiException.unauthorized("Refresh token expired");
-
-        String newAccessToken = jwtService.generateToken(user.getEmail());
-        String newRefreshToken = UUID.randomUUID().toString();
-
-        user.setRefreshToken(newRefreshToken);
-        user.setRefreshTokenExpiry(LocalDateTime.now().plusDays(7));
-        userRepository.save(user);
-
-        UserDetailsDto userDetails = mapToUserDetails(user);
-        LoginResponse response = new LoginResponse(newAccessToken, newRefreshToken, userDetails);
-        return ApiResponse.success("Token refreshed", response);
-    }
-
-    @Override
-    public ApiResponse<Boolean> changePassword(String accessToken, ChangePasswordRequest request) {
-        String email = jwtService.extractEmail(accessToken);
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> ApiException.unauthorized("User not found"));
-
-        if (!passwordEncoder.matches(request.oldPassword(), user.getPassword()))
-            throw ApiException.badRequest("Old password is incorrect");
-
-        if (passwordEncoder.matches(request.newPassword(), user.getPassword()))
-            throw ApiException.badRequest("New password cannot be same as old password");
-
-        user.setPassword(passwordEncoder.encode(request.newPassword()));
-        userRepository.save(user);
-        return ApiResponse.success("Password changed successfully", true);
-    }
-
-    @Override
-    public ApiResponse<String> forgetPassword(ForgotPasswordRequest request) {
-        User user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> ApiException.badRequest("User nor found"));
-        String resetToken = UUID.randomUUID().toString();
-
-        user.setResetToken(resetToken);
-        user.setResetTokenExpiry(LocalDateTime.now().plusMinutes(15));
-        userRepository.save(user);
-
-        return ApiResponse.success("Reset token generated", resetToken);
-    }
-
-    @Override
-    public ApiResponse<Boolean> resetPassword(ResetPasswordRequest request) {
-        User user = userRepository.findByResetToken(request.resetToken())
-                .orElseThrow(() -> ApiException.badRequest("Invalid reset token"));
-
-        if (user.getResetTokenExpiry().isBefore(LocalDateTime.now()))
-            throw ApiException.badRequest("Token expired");
-
-        user.setPassword(passwordEncoder.encode(request.newPassword()));
-        user.setResetToken(null);
-        user.setResetTokenExpiry(null);
-        userRepository.save(user);
-
-        return ApiResponse.success("Password reset successful", true);
     }
 
     @Override
@@ -215,7 +153,82 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
-    private UserDetailsDto mapToUserDetails(User user) {
+    @Override
+    public ApiResponse<LoginResponse> refreshToken(RefreshTokenRequest request) {
+        User user = userRepository.findByRefreshToken(request.refreshToken())
+                .orElseThrow(() -> ApiException.unauthorized("Invalid refresh token"));
+
+        if (user.getRefreshTokenExpiry().isBefore(LocalDateTime.now()))
+            throw ApiException.unauthorized("Refresh token expired");
+
+        String newAccessToken = jwtService.generateToken(user.getEmail());
+        String newRefreshToken = UUID.randomUUID().toString();
+
+        user.setRefreshToken(newRefreshToken);
+        user.setRefreshTokenExpiry(LocalDateTime.now().plusDays(7));
+        user.setUpdatedAt(Instant.now());
+        userRepository.save(user);
+
+        UserDetailsDto userDetails = mapToUserDetails(user);
+        LoginResponse response = new LoginResponse(newAccessToken, newRefreshToken, userDetails);
+        return ApiResponse.success("Token refreshed", response);
+    }
+
+    @Override
+    public ApiResponse<ChangePasswordResponse> changePassword(String accessToken, ChangePasswordRequest request) {
+        String email = jwtService.extractEmail(accessToken);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> ApiException.unauthorized("User not found"));
+
+        if (!passwordEncoder.matches(request.oldPassword(), user.getPassword()))
+            throw ApiException.badRequest("Old password is incorrect");
+
+        if (passwordEncoder.matches(request.newPassword(), user.getPassword()))
+            throw ApiException.badRequest("New password cannot be same as old password");
+
+        user.setPassword(passwordEncoder.encode(request.newPassword()));
+        user.setUpdatedAt(Instant.now());
+        userRepository.save(user);
+
+        ChangePasswordResponse response = new ChangePasswordResponse(
+                true,
+                "Password changed successfully"
+        );
+        return ApiResponse.success("Password changed successfully", response);
+    }
+
+    @Override
+    public ApiResponse<String> forgetPassword(ForgotPasswordRequest request) {
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> ApiException.badRequest("User nor found"));
+        String resetToken = UUID.randomUUID().toString();
+
+        user.setResetToken(resetToken);
+        user.setResetTokenExpiry(LocalDateTime.now().plusMinutes(15));
+        user.setUpdatedAt(Instant.now());
+        userRepository.save(user);
+
+        return ApiResponse.success("Reset token generated", resetToken);
+    }
+
+    @Override
+    public ApiResponse<Boolean> resetPassword(ResetPasswordRequest request) {
+        User user = userRepository.findByResetToken(request.resetToken())
+                .orElseThrow(() -> ApiException.badRequest("Invalid reset token"));
+
+        if (user.getResetTokenExpiry().isBefore(LocalDateTime.now()))
+            throw ApiException.badRequest("Token expired");
+
+        user.setPassword(passwordEncoder.encode(request.newPassword()));
+        user.setResetToken(null);
+        user.setResetTokenExpiry(null);
+        user.setUpdatedAt(Instant.now());
+        userRepository.save(user);
+
+        return ApiResponse.success("Password reset successful", true);
+    }
+
+       private UserDetailsDto mapToUserDetails(User user) {
         return UserDetailsDto.builder()
                 .id(user.getId())
                 .firstName(user.getFirstName())

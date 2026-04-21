@@ -14,13 +14,13 @@ public interface AuthService {
 
     ApiResponse<LogoutResponse> logout(String accessToken);
 
+    ApiResponse<TokenValidationResponse> validateToken(String accessToken);
+
     ApiResponse<LoginResponse> refreshToken(RefreshTokenRequest request);
 
-    ApiResponse<Boolean> changePassword(String accessToken, ChangePasswordRequest request);
+    ApiResponse<ChangePasswordResponse> changePassword(String accessToken, ChangePasswordRequest request);
 
     ApiResponse<String> forgetPassword(ForgotPasswordRequest request);
 
     ApiResponse<Boolean> resetPassword(ResetPasswordRequest request);
-
-    ApiResponse<TokenValidationResponse> validateToken(String accessToken);
 }
