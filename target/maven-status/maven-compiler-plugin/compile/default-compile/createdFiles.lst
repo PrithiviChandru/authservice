@@ -5,12 +5,14 @@ com\micro\authservice\dto\request\VerifyEmailRequest.class
 com\micro\authservice\exception\ApiException.class
 com\micro\authservice\service\UserService.class
 com\micro\authservice\repository\UserRepository.class
+com\micro\authservice\dto\response\ForgotPasswordResponse.class
 com\micro\authservice\dto\response\ApiResponse.class
 com\micro\authservice\security\SecurityConfig.class
 com\micro\authservice\dto\request\LoginRequest.class
 com\micro\authservice\dto\response\RefreshTokenResponse.class
 com\micro\authservice\schema\ErrorResponseSchema.class
 com\micro\authservice\controller\UserController.class
+com\micro\authservice\schema\ForgotPasswordResponseSchema.class
 com\micro\authservice\constants\Constants.class
 com\micro\authservice\dto\response\LoginResponse.class
 com\micro\authservice\security\JwtService.class
@@ -40,6 +42,7 @@ com\micro\authservice\dto\request\ChangePasswordRequest.class
 com\micro\authservice\schema\LogoutResponseSchema.class
 com\micro\authservice\AuthServiceApplication.class
 com\micro\authservice\entity\User.class
+com\micro\authservice\schema\ResetPasswordResponseSchema.class
 com\micro\authservice\schema\TokenValidationResponseSchema.class
 com\micro\authservice\service\impl\AuthServiceImpl.class
 com\micro\authservice\dto\request\TokenValidationRequest.class
@@ -48,3 +51,4 @@ com\micro\authservice\enums\Role.class
 com\micro\authservice\dto\request\RegisterRequest.class
 com\micro\authservice\schema\RegisterResponseSchema.class
 com\micro\authservice\schema\ChangePasswordResponseSchema.class
+com\micro\authservice\dto\response\ResetPasswordResponse.class

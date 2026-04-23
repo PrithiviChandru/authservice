@@ -198,21 +198,27 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ApiResponse<String> forgetPassword(ForgotPasswordRequest request) {
+    public ApiResponse<ForgotPasswordResponse> forgetPassword(ForgotPasswordRequest request) {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> ApiException.badRequest("User nor found"));
-        String resetToken = UUID.randomUUID().toString();
 
+        String resetToken = UUID.randomUUID().toString();
+        LocalDateTime resetTokenExpiry = LocalDateTime.now().plusMinutes(15);
         user.setResetToken(resetToken);
-        user.setResetTokenExpiry(LocalDateTime.now().plusMinutes(15));
+        user.setResetTokenExpiry(resetTokenExpiry);
         user.setUpdatedAt(Instant.now());
         userRepository.save(user);
 
-        return ApiResponse.success("Reset token generated", resetToken);
+        ForgotPasswordResponse response = new ForgotPasswordResponse(
+                resetToken,
+                resetTokenExpiry,
+                "Password reset token generated successfully. Please use the token to reset your password before it expires."
+        );
+        return ApiResponse.success("Reset token generated", response);
     }
 
     @Override
-    public ApiResponse<Boolean> resetPassword(ResetPasswordRequest request) {
+    public ApiResponse<ResetPasswordResponse> resetPassword(ResetPasswordRequest request) {
         User user = userRepository.findByResetToken(request.resetToken())
                 .orElseThrow(() -> ApiException.badRequest("Invalid reset token"));
 
@@ -225,10 +231,14 @@ public class AuthServiceImpl implements AuthService {
         user.setUpdatedAt(Instant.now());
         userRepository.save(user);
 
-        return ApiResponse.success("Password reset successful", true);
+        ResetPasswordResponse response = new ResetPasswordResponse(
+                true,
+                "Password has been reset successfully. You can now log in with your new password."
+        );
+        return ApiResponse.success("Password reset successful", response);
     }
 
-       private UserDetailsDto mapToUserDetails(User user) {
+    private UserDetailsDto mapToUserDetails(User user) {
         return UserDetailsDto.builder()
                 .id(user.getId())
                 .firstName(user.getFirstName())

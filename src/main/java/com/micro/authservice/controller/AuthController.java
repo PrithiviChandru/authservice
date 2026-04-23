@@ -288,15 +288,61 @@ public class AuthController {
         return ResponseEntity.ok(authService.changePassword(accessToken, request));
     }
 
+    @Operation(
+            summary = "Forgot Password",
+            description = "Generates a password reset token and sends it to the registered email address"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Reset link sent successfully",
+                    content = @Content(schema = @Schema(implementation = ForgotPasswordResponseSchema.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid request",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseSchema.class))
+            )
+    })
     @PostMapping("/forgot-password")
-    public ResponseEntity<ApiResponse<String>> forgotPassword(
+    public ResponseEntity<ApiResponse<ForgotPasswordResponse>> forgotPassword(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "User email for password reset",
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(implementation = ForgotPasswordRequest.class)
+                    )
+            )
             @Valid @RequestBody ForgotPasswordRequest request
     ) {
         return ResponseEntity.ok(authService.forgetPassword(request));
     }
 
+    @Operation(
+            summary = "Reset Password",
+            description = "Resets user password using a valid reset token"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Password reset successful",
+                    content = @Content(schema = @Schema(implementation = ResetPasswordResponseSchema.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid or expired token",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseSchema.class))
+            )
+    })
     @PostMapping("/reset-password")
-    public ResponseEntity<ApiResponse<Boolean>> resetPassword(
+    public ResponseEntity<ApiResponse<ResetPasswordResponse>> resetPassword(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Reset password request payload",
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(implementation = ResetPasswordRequest.class)
+                    )
+            )
             @Valid @RequestBody ResetPasswordRequest request
     ) {
         return ResponseEntity.ok(authService.resetPassword(request));

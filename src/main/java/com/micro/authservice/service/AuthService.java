@@ -20,7 +20,7 @@ public interface AuthService {
 
     ApiResponse<ChangePasswordResponse> changePassword(String accessToken, ChangePasswordRequest request);
 
-    ApiResponse<String> forgetPassword(ForgotPasswordRequest request);
+    ApiResponse<ForgotPasswordResponse> forgetPassword(ForgotPasswordRequest request);
 
-    ApiResponse<Boolean> resetPassword(ResetPasswordRequest request);
+    ApiResponse<ResetPasswordResponse> resetPassword(ResetPasswordRequest request);
 }
