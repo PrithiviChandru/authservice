@@ -1,7 +1,7 @@
 package com.micro.authservice.schema;
 
 import com.micro.authservice.dto.response.ApiResponse;
-import com.micro.authservice.dto.response.LogoutResponse;
+import com.micro.authservice.dto.response.auth.LogoutResponse;
 
 import java.time.LocalDateTime;
 

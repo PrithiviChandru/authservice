@@ -1,7 +1,8 @@
 package com.micro.authservice.controller;
 
-import com.micro.authservice.dto.request.*;
+import com.micro.authservice.dto.request.auth.*;
 import com.micro.authservice.dto.response.*;
+import com.micro.authservice.dto.response.auth.*;
 import com.micro.authservice.schema.*;
 import com.micro.authservice.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -347,5 +348,4 @@ public class AuthController {
     ) {
         return ResponseEntity.ok(authService.resetPassword(request));
     }
-
 }

@@ -1,7 +1,7 @@
 package com.micro.authservice.schema;
 
 import com.micro.authservice.dto.response.ApiResponse;
-import com.micro.authservice.dto.response.VerifyEmailResponse;
+import com.micro.authservice.dto.response.auth.VerifyEmailResponse;
 
 import java.time.LocalDateTime;
 

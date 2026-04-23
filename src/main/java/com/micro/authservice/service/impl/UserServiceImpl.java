@@ -1,8 +1,9 @@
 package com.micro.authservice.service.impl;
 
-import com.micro.authservice.dto.request.UpdateProfileRequest;
+import com.micro.authservice.dto.request.auth.UpdateProfileRequest;
 import com.micro.authservice.dto.response.ApiResponse;
 import com.micro.authservice.dto.UserDetailsDto;
+import com.micro.authservice.dto.response.user.DeleteResponse;
 import com.micro.authservice.entity.User;
 import com.micro.authservice.exception.ApiException;
 import com.micro.authservice.repository.UserRepository;
@@ -55,9 +56,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResponse<String> deleteById(Long id) {
+    public ApiResponse<DeleteResponse> deleteById(Long id) {
         userRepository.deleteById(id);
-        return ApiResponse.success("User deletion successful", "Deleted");
+        DeleteResponse response = new DeleteResponse(
+                true,
+                id,
+                "User deleted successfully"
+        );
+        return ApiResponse.success("User deletion successful", response);
     }
 
     private UserDetailsDto mapToUserDetails(User user) {

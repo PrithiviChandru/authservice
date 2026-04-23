@@ -2,7 +2,7 @@ package com.micro.authservice.schema;
 
 
 import com.micro.authservice.dto.response.ApiResponse;
-import com.micro.authservice.dto.response.RegisterResponse;
+import com.micro.authservice.dto.response.auth.RegisterResponse;
 
 import java.time.LocalDateTime;
 

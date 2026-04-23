@@ -1,7 +1,8 @@
 package com.micro.authservice.service;
 
-import com.micro.authservice.dto.request.*;
+import com.micro.authservice.dto.request.auth.*;
 import com.micro.authservice.dto.response.*;
+import com.micro.authservice.dto.response.auth.*;
 
 public interface AuthService {
     ApiResponse<RegisterResponse> register(RegisterRequest request);
