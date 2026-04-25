@@ -1,6 +1,6 @@
 package com.micro.authservice.controller;
 
-import com.micro.authservice.dto.UserDetailsDto;
+import com.micro.authservice.dto.UserResponse;
 import com.micro.authservice.dto.request.auth.UpdateProfileRequest;
 import com.micro.authservice.dto.response.ApiResponse;
 import com.micro.authservice.dto.response.user.DeleteResponse;
@@ -15,13 +15,19 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(
+        name = "User APIs",
+        description = "User related operations"
+)
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -51,7 +57,7 @@ public class UserController {
     })
     @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/profile")
-    public ResponseEntity<ApiResponse<UserDetailsDto>> updateProfile(
+    public ResponseEntity<ApiResponse<UserResponse>> updateProfile(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Reset password request payload",
                     required = true,
@@ -64,6 +70,36 @@ public class UserController {
     ) {
         String accessToken = (String) authentication.getDetails();
         return ResponseEntity.ok(userService.updateProfile(accessToken, request));
+    }
+
+    @Operation(
+            summary = "Retrieve user profile",
+            description = "Retrieve the authenticated user's profile details"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Profile retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = UserDetailsSchema.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid request data",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseSchema.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "401",
+                    description = "Unauthorized",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseSchema.class))
+            ),
+    })
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping("/profile")
+    public ResponseEntity<ApiResponse<UserResponse>> getProfile(
+            Authentication authentication
+    ) {
+        String accessToken = (String) authentication.getDetails();
+        return ResponseEntity.ok(userService.getProfile(accessToken));
     }
 
     @Operation(
@@ -83,14 +119,15 @@ public class UserController {
             ),
     })
     @SecurityRequirement(name = "bearerAuth")
-    @GetMapping("/list")
-    public ResponseEntity<ApiResponse<List<UserDetailsDto>>> getAllUsers() {
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @Operation(
             summary = "Get user by ID",
-            description = "Fetches user details by user ID (Admin or owner access)"
+            description = "Fetches user details by user ID"
     )
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -108,20 +145,21 @@ public class UserController {
                     content = @Content(schema = @Schema(implementation = ErrorResponseSchema.class)))
     })
     @SecurityRequirement(name = "bearerAuth")
-    @GetMapping("/get/{id}")
-    public ResponseEntity<ApiResponse<UserDetailsDto>> getUserById(
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<UserResponse>> getUser(
             @Parameter(
                     description = "User ID",
                     required = true,
                     example = "1"
             )
             @PathVariable("id") Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
+        return ResponseEntity.ok(userService.getUser(id));
     }
 
     @Operation(
-            summary = "Delete user",
-            description = "Deletes a user by ID (Admin only)"
+            summary = "Delete user by ID",
+            description = "Deletes a user by ID"
     )
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -134,14 +172,15 @@ public class UserController {
                     description = "Unauthorized",
                     content = @Content(schema = @Schema(implementation = ErrorResponseSchema.class))),
     })
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ApiResponse<DeleteResponse>> deleteById(
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<DeleteResponse>> deleteUser(
             @Parameter(
                     description = "User ID",
                     required = true,
                     example = "1"
             )
             @PathVariable("id") Long id) {
-        return ResponseEntity.ok(userService.deleteById(id));
+        return ResponseEntity.ok(userService.deleteUser(id));
     }
 }

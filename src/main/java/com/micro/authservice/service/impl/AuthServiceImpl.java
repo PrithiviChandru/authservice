@@ -1,8 +1,8 @@
 package com.micro.authservice.service.impl;
 
+import com.micro.authservice.dto.UserResponse;
 import com.micro.authservice.dto.request.auth.*;
-import com.micro.authservice.dto.response.*;
-import com.micro.authservice.dto.UserDetailsDto;
+import com.micro.authservice.dto.response.ApiResponse;
 import com.micro.authservice.dto.response.auth.*;
 import com.micro.authservice.entity.User;
 import com.micro.authservice.enums.Role;
@@ -113,8 +113,8 @@ public class AuthServiceImpl implements AuthService {
             user.setUpdatedAt(Instant.now());
             userRepository.save(user);
 
-            UserDetailsDto userDetails = mapToUserDetails(user);
-            LoginResponse response = new LoginResponse(accessToken, refreshToken, userDetails);
+            UserResponse userInfo = mapToUserDetails(user);
+            LoginResponse response = new LoginResponse(accessToken, refreshToken, userInfo);
             return ApiResponse.success("Login successful", response);
         }
     }
@@ -146,8 +146,8 @@ public class AuthServiceImpl implements AuthService {
             User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> ApiException.unauthorized("User not found"));
 
-            UserDetailsDto userDetails = mapToUserDetails(user);
-            TokenValidationResponse response = new TokenValidationResponse(true, userDetails);
+            UserResponse userInfo = mapToUserDetails(user);
+            TokenValidationResponse response = new TokenValidationResponse(true, userInfo);
             return ApiResponse.success("Token is valid", response);
         } else {
             throw ApiException.unauthorized("Token expired or invalid");
@@ -170,8 +170,8 @@ public class AuthServiceImpl implements AuthService {
         user.setUpdatedAt(Instant.now());
         userRepository.save(user);
 
-        UserDetailsDto userDetails = mapToUserDetails(user);
-        LoginResponse response = new LoginResponse(newAccessToken, newRefreshToken, userDetails);
+        UserResponse userInfo = mapToUserDetails(user);
+        LoginResponse response = new LoginResponse(newAccessToken, newRefreshToken, userInfo);
         return ApiResponse.success("Token refreshed", response);
     }
 
@@ -239,8 +239,8 @@ public class AuthServiceImpl implements AuthService {
         return ApiResponse.success("Password reset successful", response);
     }
 
-    private UserDetailsDto mapToUserDetails(User user) {
-        return UserDetailsDto.builder()
+    private UserResponse mapToUserDetails(User user) {
+        return UserResponse.builder()
                 .id(user.getId())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())

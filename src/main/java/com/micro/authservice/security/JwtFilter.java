@@ -1,11 +1,15 @@
 package com.micro.authservice.security;
 
+import com.micro.authservice.entity.User;
+import com.micro.authservice.exception.ApiException;
+import com.micro.authservice.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -29,6 +33,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
     private TokenBlackListService tokenBlackListService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(
@@ -62,9 +69,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
             try {
                 String email = jwtService.extractEmail(accessToken);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, null, List.of());
+                User user = userRepository.findByEmail(email).orElseThrow(() -> ApiException.notFound("User not found"));
+                SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + user.getRole().name());
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, List.of(authority));
                 authentication.setDetails(accessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+
                 filterChain.doFilter(request, response);
             } catch (Exception ex) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
