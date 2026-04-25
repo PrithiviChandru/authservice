@@ -1,12 +1,15 @@
 package com.micro.authservice.security;
 
+import com.micro.authservice.entity.User;
 import com.micro.authservice.exception.ApiException;
+import com.micro.authservice.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -18,19 +21,21 @@ import java.util.List;
 public class JwtFilter extends OncePerRequestFilter {
     private static final List<String> PUBLIC_ENDPOINTS = List.of(
             "/api/auth/register",
+            "/api/auth/verify-email",
+            "/api/auth/resent-verification",
             "/api/auth/login",
             "/api/auth/forgot-password",
             "/api/auth/reset-password",
-            "/api/auth/verify-email",
-            "/api/auth/resent-verification",
-            "/api/auth/refresh-token",
-            "/h2-console");
+            "/api/auth/refresh-token");
 
     @Autowired
     private JwtService jwtService;
 
     @Autowired
     private TokenBlackListService tokenBlackListService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(
@@ -47,8 +52,8 @@ public class JwtFilter extends OncePerRequestFilter {
         else {
             if (null == authHeader || !authHeader.startsWith("Bearer ")) {
 //                if (path.contains("swagger") || path.contains("v3-docs")) {
-                    filterChain.doFilter(request, response);
-                    return;
+                filterChain.doFilter(request, response);
+                return;
 //                }
 //                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 //                response.getWriter().write("Authorization header missing");
@@ -64,9 +69,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
             try {
                 String email = jwtService.extractEmail(accessToken);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, null, List.of());
+                User user = userRepository.findByEmail(email).orElseThrow(() -> ApiException.notFound("User not found"));
+                SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + user.getRole().name());
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, List.of(authority));
                 authentication.setDetails(accessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+
                 filterChain.doFilter(request, response);
             } catch (Exception ex) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

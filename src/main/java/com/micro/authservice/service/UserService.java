@@ -1,17 +1,20 @@
 package com.micro.authservice.service;
 
-import com.micro.authservice.dto.request.UpdateProfileRequest;
+import com.micro.authservice.dto.UserResponse;
+import com.micro.authservice.dto.request.auth.UpdateProfileRequest;
 import com.micro.authservice.dto.response.ApiResponse;
-import com.micro.authservice.dto.UserDetailsDto;
+import com.micro.authservice.dto.response.user.DeleteResponse;
 
 import java.util.List;
 
 public interface UserService {
-    ApiResponse<List<UserDetailsDto>> getAllUsers();
+    ApiResponse<UserResponse> updateProfile(String accessToken, UpdateProfileRequest request);
 
-    ApiResponse<UserDetailsDto> getUserById(Long id);
+    ApiResponse<UserResponse> getProfile(String accessToken);
 
-    ApiResponse<UserDetailsDto> updateProfile(String accessToken,UpdateProfileRequest request);
+    ApiResponse<List<UserResponse>> getAllUsers();
 
-    ApiResponse<String> deleteById(Long id);
+    ApiResponse<UserResponse> getUser(Long id);
+
+    ApiResponse<DeleteResponse> deleteUser(Long id);
 }
