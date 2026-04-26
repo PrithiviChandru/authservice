@@ -7,15 +7,19 @@ spring:
   application:
     name: authservice
   datasource:
+    #    driver-class-name: com.mysql.cj.jdbc.Driver
+    #    url: jdbc:mysql://${MYSQL_ADDON_HOST}:${MYSQL_ADDON_PORT}/${MYSQL_ADDON_DB}?useSSL=false&serverTimeZone=UTC
+    #    username: ${MYSQL_ADDON_USER}
+    #    password: ${MYSQL_ADDON_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/auth_db
-    username: root
-    password: 1234
+    url: jdbc:mysql://btto0jkgdh3evw6bqwqy-mysql.services.clever-cloud.com:3306/btto0jkgdh3evw6bqwqy?useSSL=false&serverTimeZone=UTC
+    username: utqpo2izfkwvlwtz
+    password: 1ORGBw9V5HDroDRWJuFe
   jpa:
-    database-platform: org.hibernate.dialect.MySQLDialect
+    #    database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: create
-    show-sql: true
+      ddl-auto: update
+    show-sql: false
 
 #Token Properties
 jwt:
