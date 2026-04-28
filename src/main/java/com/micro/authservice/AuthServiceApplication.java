@@ -27,6 +27,11 @@ public class AuthServiceApplication {
     public static void main(String[] args) {
 //        jwtDecode();
 //        System.out.println(System.getenv("MYSQL_ADDON_HOST"));
+//        System.out.println(System.getenv("MYSQL_ADDON_DB"));
+//        System.out.println(System.getenv("MYSQL_ADDON_USER"));
+//        System.out.println(System.getenv("MYSQL_ADDON_PORT"));
+//        System.out.println(System.getenv("MYSQL_ADDON_PASSWORD"));
+//        System.out.println(System.getenv("MYSQL_ADDON_URI"));
         SpringApplication.run(AuthServiceApplication.class, args);
     }
 }
