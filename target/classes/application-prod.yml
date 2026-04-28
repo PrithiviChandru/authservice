@@ -14,7 +14,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://btto0jkgdh3evw6bqwqy-mysql.services.clever-cloud.com:3306/btto0jkgdh3evw6bqwqy?useSSL=false&serverTimeZone=UTC
     username: utqpo2izfkwvlwtz
-    password: 1ORGBw9V5HDroDRWJuFe
+    password: 0c1anLlnMmzFCYVssL1N
   jpa:
     #    database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
