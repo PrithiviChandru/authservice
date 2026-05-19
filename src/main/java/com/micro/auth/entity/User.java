@@ -1,6 +1,7 @@
 package com.micro.auth.entity;
 
 import com.micro.auth.enums.Role;
+import com.micro.order.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -68,4 +69,16 @@ public class User {
 
     @UpdateTimestamp
     private Instant updatedAt;
+
+    @PrePersist
+    public void onCreate() {
+        Instant ts = Instant.now();
+        this.createdAt = ts;
+        this.updatedAt = ts;
+    }
+
+    @PreUpdate
+    public void onUpdate() {
+        this.updatedAt = Instant.now();
+    }
 }

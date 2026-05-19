@@ -33,7 +33,17 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ApiResponse<ProductResponse> updateProduct(Long id, ProductRequest request) {
-        return null;
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> ApiException.notFound("Product not found"));
+
+        product.setName(request.name());
+        product.setDescription(request.description());
+        product.setStock(request.stock());
+        product.setPrice(request.price());
+
+        Product updatedProduct = productRepository.save(product);
+        ProductResponse response = mapToProductRes(updatedProduct);
+        return ApiResponse.success("Product updated successfully", response);
     }
 
     @Override
@@ -72,7 +82,6 @@ public class ProductServiceImpl implements ProductService {
                 .description(request.description())
                 .price(request.price())
                 .stock(request.stock())
-                .createdAt(Instant.now())
                 .build();
     }
 
@@ -84,6 +93,7 @@ public class ProductServiceImpl implements ProductService {
                 .price(product.getPrice())
                 .stock(product.getStock())
                 .createdAt(product.getCreatedAt())
+                .updatedAt(product.getUpdatedAt())
                 .build();
     }
 }

@@ -15,4 +15,5 @@ public class ProductResponse {
     private BigDecimal price;
     private Integer stock;
     private Instant createdAt;
+    private Instant updatedAt;
 }
