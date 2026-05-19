@@ -26,7 +26,7 @@ public class OpenApiConfig {
                         )
                 )
                 // Authorization details
-                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
+//                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .components(new Components()
                         .addSecuritySchemes(
                                 "bearerAuth",

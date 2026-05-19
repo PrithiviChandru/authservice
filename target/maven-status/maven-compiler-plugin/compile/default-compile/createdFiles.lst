@@ -46,6 +46,7 @@ com\micro\payment\repository\PaymentRepository.class
 com\micro\product\service\ProductService.class
 com\micro\order\service\OrderService.class
 com\micro\auth\schema\ChangePasswordResponseSchema.class
+com\micro\payment\controller\PaymentController.class
 com\micro\product\schema\ProductListResponseSchema.class
 com\micro\auth\exception\ApiException.class
 com\micro\product\entity\Product$ProductBuilder.class
@@ -59,6 +60,7 @@ com\micro\payment\dto\PaymentResponse$PaymentResponseBuilder.class
 com\micro\order\entity\Order.class
 com\micro\auth\schema\user\DeleteResponseSchema.class
 com\micro\order\schema\OrderListResponseSchema.class
+com\micro\payment\schema\PaymentListResponseSchema.class
 com\micro\order\schema\OrderResponseSchema.class
 com\micro\payment\service\PaymentService.class
 com\micro\auth\dto\request\auth\ResetPasswordRequest.class
@@ -70,7 +72,6 @@ com\micro\auth\schema\RefreshTokenResponseSchema.class
 com\micro\auth\schema\VerifyEmailResponseSchema.class
 com\micro\auth\constants\Constants.class
 com\micro\payment\entity\Payment$PaymentBuilder.class
-com\micro\payment\schema\PaymentListResponse.class
 com\micro\product\service\impl\ProductServiceImpl.class
 com\micro\auth\repository\UserRepository.class
 com\micro\product\repository\ProductRepository.class
