@@ -20,4 +20,4 @@ spring:
 #Token Properties
 jwt:
   secret: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-  expiration: 300000 # 5 mins
+  expiration: 1800000  # 30 minutes

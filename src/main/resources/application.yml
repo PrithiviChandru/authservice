@@ -1,6 +1,6 @@
 #Server Port
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 #Database Credentials
 spring:
@@ -8,16 +8,16 @@ spring:
     name: authservice
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/auth_db
-    username: root
-    password: 1234
-  jpa:
-    database-platform: org.hibernate.dialect.MySQLDialect
+    url: jdbc:mysql://${MYSQL_ADDON_HOST}:${MYSQL_ADDON_PORT}/${MYSQL_ADDON_DB}?useSSL=false&serverTimeZone=UTC
+    username: ${MYSQL_ADDON_USER}
+    password: ${MYSQL_ADDON_PASSWORD}
+    jpa:
+      database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: create
+    show-sql: false
 
 #Token Properties
 jwt:
   secret: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-  expiration: 300000 # 5 mins
+  expiration: 1800000  # 30 minutes
