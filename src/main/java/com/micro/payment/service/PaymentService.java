@@ -10,7 +10,7 @@ import java.util.List;
 public interface PaymentService {
     ApiResponse<PaymentResponse> makePayment(Authentication authentication, PaymentRequest request);
 
-    ApiResponse<List<PaymentResponse>> myPayments();
+    ApiResponse<List<PaymentResponse>> myPayments(Authentication authentication);
 
-    ApiResponse<PaymentResponse> getPayment(Long id);
+    ApiResponse<PaymentResponse> getPayment(Authentication authentication, Long id);
 }

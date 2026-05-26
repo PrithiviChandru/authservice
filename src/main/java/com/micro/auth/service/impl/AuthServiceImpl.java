@@ -155,7 +155,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ApiResponse<LoginResponse> refreshToken(RefreshTokenRequest request) {
+    public ApiResponse<RefreshTokenResponse> refreshToken(RefreshTokenRequest request) {
         User user = userRepository.findByRefreshToken(request.refreshToken())
                 .orElseThrow(() -> ApiException.unauthorized("Invalid refresh token"));
 
@@ -171,7 +171,7 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
 
         UserResponse userInfo = mapToUserDetails(user);
-        LoginResponse response = new LoginResponse(newAccessToken, newRefreshToken, userInfo);
+        RefreshTokenResponse response = new RefreshTokenResponse(newAccessToken, newRefreshToken, userInfo);
         return ApiResponse.success("Token refreshed", response);
     }
 

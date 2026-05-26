@@ -17,7 +17,7 @@ public interface AuthService {
 
     ApiResponse<TokenValidationResponse> validateToken(String accessToken);
 
-    ApiResponse<LoginResponse> refreshToken(RefreshTokenRequest request);
+    ApiResponse<RefreshTokenResponse> refreshToken(RefreshTokenRequest request);
 
     ApiResponse<ChangePasswordResponse> changePassword(String accessToken, ChangePasswordRequest request);
 

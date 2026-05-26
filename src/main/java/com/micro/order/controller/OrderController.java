@@ -8,6 +8,7 @@ import com.micro.order.schema.OrderListResponseSchema;
 import com.micro.order.schema.OrderResponseSchema;
 import com.micro.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -134,7 +135,12 @@ public class OrderController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<OrderResponse>> getOrder(
-            @PathVariable Long id
+            @Parameter(
+                    description = "Order ID",
+                    required = true,
+                    example = "1"
+            )
+            @PathVariable("id") Long id
     ) {
         return ResponseEntity.ok(orderService.getOrder(id));
     }
@@ -163,7 +169,12 @@ public class OrderController {
     @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<OrderResponse>> cancelOrder(
-            @PathVariable Long id
+            @Parameter(
+                    description = "Order ID",
+                    required = true,
+                    example = "1"
+            )
+            @PathVariable("id") Long id
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return ResponseEntity.ok(orderService.cancelOrder(authentication, id));

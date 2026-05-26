@@ -1,6 +1,5 @@
 D:\java\idea\microservices\authservice\src\main\java\com\micro\auth\config\DataInitializer.java
 D:\java\idea\microservices\authservice\src\main\java\com\micro\auth\config\OpenApiConfig.java
-D:\java\idea\microservices\authservice\src\main\java\com\micro\auth\constants\Constants.java
 D:\java\idea\microservices\authservice\src\main\java\com\micro\auth\controller\AuthController.java
 D:\java\idea\microservices\authservice\src\main\java\com\micro\auth\controller\UserController.java
 D:\java\idea\microservices\authservice\src\main\java\com\micro\auth\dto\request\auth\ChangePasswordRequest.java

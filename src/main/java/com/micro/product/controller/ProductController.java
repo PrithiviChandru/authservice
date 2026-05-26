@@ -8,6 +8,7 @@ import com.micro.product.schema.ProductResponseSchema;
 import com.micro.product.service.ProductService;
 import com.micro.auth.schema.ErrorResponseSchema;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -88,7 +89,12 @@ public class ProductController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<ProductResponse>> updateProduct(
-            @PathVariable Long id,
+            @Parameter(
+                    description = "Product ID",
+                    required = true,
+                    example = "1"
+            )
+            @PathVariable("id") Long id,
             @RequestBody ProductRequest request
     ) {
         return ResponseEntity.ok(productService.updateProduct(id, request));
@@ -138,7 +144,12 @@ public class ProductController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ProductResponse>> getProduct(
-            @PathVariable Long id
+            @Parameter(
+                    description = "Product ID",
+                    required = true,
+                    example = "1"
+            )
+            @PathVariable("id") Long id
     ) {
         return ResponseEntity.ok(productService.getProduct(id));
     }
@@ -162,7 +173,12 @@ public class ProductController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<ProductResponse>> deleteProduct(
-            @PathVariable Long id
+            @Parameter(
+                    description = "Product ID",
+                    required = true,
+                    example = "1"
+            )
+            @PathVariable("id") Long id
     ) {
         return ResponseEntity.ok(productService.deleteProduct(id));
     }

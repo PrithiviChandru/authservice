@@ -1,7 +1,7 @@
 package com.micro.auth.controller;
 
 import com.micro.auth.dto.request.auth.*;
-import com.micro.auth.dto.response.*;
+import com.micro.auth.dto.response.ApiResponse;
 import com.micro.auth.dto.response.auth.*;
 import com.micro.auth.schema.*;
 import com.micro.auth.service.AuthService;
@@ -245,7 +245,7 @@ public class AuthController {
             )
     })
     @PostMapping("/refresh-token")
-    public ResponseEntity<ApiResponse<LoginResponse>> refreshToken(
+    public ResponseEntity<ApiResponse<RefreshTokenResponse>> refreshToken(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Refresh token request",
                     required = true,

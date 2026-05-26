@@ -70,7 +70,6 @@ com\micro\product\dto\ProductResponse$ProductResponseBuilder.class
 com\micro\auth\dto\response\auth\LogoutResponse.class
 com\micro\auth\schema\RefreshTokenResponseSchema.class
 com\micro\auth\schema\VerifyEmailResponseSchema.class
-com\micro\auth\constants\Constants.class
 com\micro\payment\entity\Payment$PaymentBuilder.class
 com\micro\product\service\impl\ProductServiceImpl.class
 com\micro\auth\repository\UserRepository.class

@@ -17,9 +17,9 @@ public class OpenApiConfig {
         return new OpenAPI()
                 // Information Details
                 .info(new Info()
-                        .title("Auth Service API")
+                        .title("Ecommerce Service API")
                         .version("1.0.0")
-                        .description("Authentication service APIs")
+                        .description("Ecommerce service APIs")
                         .contact(new Contact()
                                 .name("pruthvi")
                                 .email("pruthiviraj.c@gmail.com")

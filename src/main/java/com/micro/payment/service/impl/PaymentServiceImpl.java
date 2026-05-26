@@ -34,7 +34,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseThrow(() -> ApiException.notFound("Order not found"));
 
         // check ownership (USER can pay only own order)
-        User currentUser = (User) authentication.getDetails();
+        User currentUser = (User) authentication.getPrincipal();
         boolean isAdmin = currentUser.getRole().name().equals("ADMIN");
         if (!isAdmin && !order.getUser().getId().equals(currentUser.getId()))
             throw ApiException.badRequest("You are not allowed to pay this order");
@@ -82,12 +82,54 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ApiResponse<List<PaymentResponse>> myPayments() {
-        return null;
+    public ApiResponse<List<PaymentResponse>> myPayments(Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        List<Payment> payments = paymentRepository.findByOrderUserId(user.getId());
+
+        List<PaymentResponse> responses = payments.stream()
+                .map(payment -> PaymentResponse.builder()
+                        .id(payment.getId())
+                        .orderId(payment.getOrder().getId())
+                        .amount(payment.getAmount())
+                        .paymentMethod(payment.getPaymentMethod())
+                        .paymentStatus(payment.getStatus())
+                        .transactionId(payment.getTransactionId())
+                        .orderStatus(payment.getOrder().getStatus())
+                        .createdAt(payment.getCreatedAt())
+                        .build()
+                ).toList();
+
+        return ApiResponse.success(
+                "Payments fetched successfully",
+                responses
+        );
     }
 
     @Override
-    public ApiResponse<PaymentResponse> getPayment(Long id) {
-        return null;
+    public ApiResponse<PaymentResponse> getPayment(Authentication authentication, Long id) {
+        Payment payment = paymentRepository.findById(id)
+                .orElseThrow(() -> ApiException.notFound("Payment not found"));
+
+        User user = (User) authentication.getPrincipal();
+        boolean isAdmin = user.getRole().name().equals("ADMIN");
+
+        if (!isAdmin && !payment.getOrder().getUser().getId().equals(user.getId()))
+            throw ApiException.badRequest("You are not allowed to view this payment");
+
+        PaymentResponse response = PaymentResponse.builder()
+                .id(payment.getId())
+                .orderId(payment.getOrder().getId())
+                .amount(payment.getAmount())
+                .paymentMethod(payment.getPaymentMethod())
+                .paymentStatus(payment.getStatus())
+                .transactionId(payment.getTransactionId())
+                .orderStatus(payment.getOrder().getStatus())
+                .createdAt(payment.getCreatedAt())
+                .build();
+
+        return ApiResponse.success(
+                "Payment fetched successfully",
+                response
+        );
     }
 }
