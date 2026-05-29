@@ -23,6 +23,7 @@ D:\java\idea\microservices\authservice\src\main\java\com\micro\auth\dto\response
 D:\java\idea\microservices\authservice\src\main\java\com\micro\auth\dto\response\auth\ResetPasswordResponse.java
 D:\java\idea\microservices\authservice\src\main\java\com\micro\auth\dto\response\auth\TokenValidationResponse.java
 D:\java\idea\microservices\authservice\src\main\java\com\micro\auth\dto\response\auth\VerifyEmailResponse.java
+D:\java\idea\microservices\authservice\src\main\java\com\micro\auth\dto\response\PagedResponse.java
 D:\java\idea\microservices\authservice\src\main\java\com\micro\auth\dto\response\user\DeleteResponse.java
 D:\java\idea\microservices\authservice\src\main\java\com\micro\auth\dto\UserResponse.java
 D:\java\idea\microservices\authservice\src\main\java\com\micro\auth\entity\User.java

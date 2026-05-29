@@ -1,6 +1,7 @@
 package com.micro.product.service.impl;
 
 import com.micro.auth.dto.response.ApiResponse;
+import com.micro.auth.dto.response.PagedResponse;
 import com.micro.auth.exception.ApiException;
 import com.micro.product.dto.ProductRequest;
 import com.micro.product.dto.ProductResponse;
@@ -8,12 +9,15 @@ import com.micro.product.entity.Product;
 import com.micro.product.repository.ProductRepository;
 import com.micro.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -47,13 +51,86 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ApiResponse<List<ProductResponse>> getProducts() {
-        List<ProductResponse> responses = productRepository.findAll()
+    public ApiResponse<PagedResponse<ProductResponse>> getProducts(int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Product> productPage = productRepository.findAll(pageable);
+
+        List<ProductResponse> products = productPage.getContent()
                 .stream()
                 .map(ProductServiceImpl::mapToProductRes)
-                .collect(Collectors.toUnmodifiableList());
-        return ApiResponse.success("Products fetched", responses);
+                .toList();
+        PagedResponse<ProductResponse> response = PagedResponse.<ProductResponse>builder()
+                .content(products)
+                .page(productPage.getNumber())
+                .size(productPage.getSize())
+                .totalElements(productPage.getTotalElements())
+                .totalPages(productPage.getTotalPages())
+                .last(productPage.isLast())
+                .build();
+
+        return ApiResponse.success(
+                "Products fetched",
+                response
+        );
     }
+
+    @Override
+    public ApiResponse<PagedResponse<ProductResponse>> searchProducts(String keyword, int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Product> productPage = productRepository.findByNameContainingIgnoreCase(keyword, pageable);
+
+        List<ProductResponse> products = productPage.getContent()
+                .stream()
+                .map(ProductServiceImpl::mapToProductRes)
+                .toList();
+        PagedResponse<ProductResponse> response = PagedResponse.<ProductResponse>builder()
+                .content(products)
+                .page(productPage.getNumber())
+                .size(productPage.getSize())
+                .totalElements(productPage.getTotalElements())
+                .totalPages(productPage.getTotalPages())
+                .last(productPage.isLast())
+                .build();
+
+        return ApiResponse.success(
+                "Products fetched",
+                response
+        );
+    }
+
+    @Override
+    public ApiResponse<PagedResponse<ProductResponse>> filterProducts(BigDecimal minPrice, BigDecimal maxPrice, int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Product> productPage = productRepository.findByPriceBetween(minPrice, maxPrice, pageable);
+
+        List<ProductResponse> products = productPage.getContent()
+                .stream()
+                .map(ProductServiceImpl::mapToProductRes)
+                .toList();
+        PagedResponse<ProductResponse> response = PagedResponse.<ProductResponse>builder()
+                .content(products)
+                .page(productPage.getNumber())
+                .size(productPage.getSize())
+                .totalElements(productPage.getTotalElements())
+                .totalPages(productPage.getTotalPages())
+                .last(productPage.isLast())
+                .build();
+
+        return ApiResponse.success(
+                "Products fetched",
+                response
+        );
+    }
+
 
     @Override
     public ApiResponse<ProductResponse> getProduct(Long id) {
