@@ -2,17 +2,19 @@ package com.micro;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 
 import java.util.Base64;
 
 @SpringBootApplication
+@EnableCaching
 public class AuthServiceApplication {
 
     /*
      *  JWT Token Explanation
      * */
     private static void jwtDecode() {
-        String token =      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwcml0aHZpQGdtYWlsLmNvbSIsImlhdCI6MTc3NTY1NTQ5NywiZXhwIjoxNzc1NjU1NTA3fQ.pZY-btXFr6SE03v8UdjraB5pI4GPutSt80Z7_6gNly8";
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwcml0aHZpQGdtYWlsLmNvbSIsImlhdCI6MTc3NTY1NTQ5NywiZXhwIjoxNzc1NjU1NTA3fQ.pZY-btXFr6SE03v8UdjraB5pI4GPutSt80Z7_6gNly8";
         String[] parts = token.split("\\.");
 
         String header = new String(Base64.getUrlDecoder().decode(parts[0]));
@@ -24,14 +26,18 @@ public class AuthServiceApplication {
         System.out.println(signature);
     }
 
+    private static void printEnv() {
+        System.out.println(System.getenv("MYSQL_ADDON_HOST"));
+        System.out.println(System.getenv("MYSQL_ADDON_DB"));
+        System.out.println(System.getenv("MYSQL_ADDON_USER"));
+        System.out.println(System.getenv("MYSQL_ADDON_PORT"));
+        System.out.println(System.getenv("MYSQL_ADDON_PASSWORD"));
+        System.out.println(System.getenv("MYSQL_ADDON_URI"));
+    }
+
     public static void main(String[] args) {
 //        jwtDecode();
-//        System.out.println(System.getenv("MYSQL_ADDON_HOST"));
-//        System.out.println(System.getenv("MYSQL_ADDON_DB"));
-//        System.out.println(System.getenv("MYSQL_ADDON_USER"));
-//        System.out.println(System.getenv("MYSQL_ADDON_PORT"));
-//        System.out.println(System.getenv("MYSQL_ADDON_PASSWORD"));
-//        System.out.println(System.getenv("MYSQL_ADDON_URI"));
+//        printEnv();
         SpringApplication.run(AuthServiceApplication.class, args);
     }
 }

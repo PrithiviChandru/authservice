@@ -9,6 +9,8 @@ import com.micro.product.entity.Product;
 import com.micro.product.repository.ProductRepository;
 import com.micro.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +38,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = "products", key = "#id")
     public ApiResponse<ProductResponse> updateProduct(Long id, ProductRequest request) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> ApiException.notFound("Product not found"));
@@ -133,6 +136,7 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
+    @Cacheable(value = "products", key = "#id")
     public ApiResponse<ProductResponse> getProduct(Long id) {
         Optional<Product> product = productRepository.findById(id);
         if (product.isEmpty())
@@ -143,6 +147,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = "products", key = "#id")
     public ApiResponse<ProductResponse> deleteProduct(Long id) {
         Optional<Product> product = productRepository.findById(id);
         if (product.isEmpty())
