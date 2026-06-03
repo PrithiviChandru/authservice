@@ -1,12 +1,13 @@
 package com.micro.product.controller;
 
 import com.micro.auth.dto.response.ApiResponse;
+import com.micro.auth.dto.response.PagedResponse;
+import com.micro.auth.schema.ErrorResponseSchema;
 import com.micro.product.dto.ProductRequest;
 import com.micro.product.dto.ProductResponse;
 import com.micro.product.schema.ProductListResponseSchema;
 import com.micro.product.schema.ProductResponseSchema;
 import com.micro.product.service.ProductService;
-import com.micro.auth.schema.ErrorResponseSchema;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -20,7 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.math.BigDecimal;
 
 @Tag(
         name = "Product APIs",
@@ -102,7 +103,7 @@ public class ProductController {
 
     @Operation(
             summary = "Get all products",
-            description = "Fetches a  list of products"
+            description = "Retrieve a paginated list of products"
     )
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -118,8 +119,70 @@ public class ProductController {
     })
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ProductResponse>>> getProducts() {
-        return ResponseEntity.ok(productService.getProducts());
+    public ResponseEntity<ApiResponse<PagedResponse<ProductResponse>>> getProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDIr
+    ) {
+        return ResponseEntity.ok(productService.getProducts(page, size, sortBy, sortDIr));
+    }
+
+    @Operation(
+            summary = "Search products by name",
+            description = "Retrieve a paginated list of products matching the given product name"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Products fetched successfully",
+                    content = @Content(schema = @Schema(implementation = ProductListResponseSchema.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "401",
+                    description = "Unauthorized",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseSchema.class))
+            ),
+    })
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<PagedResponse<ProductResponse>>> searchProducts(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDIr
+    ) {
+        return ResponseEntity.ok(productService.searchProducts(keyword, page, size, sortBy, sortDIr));
+    }
+
+    @Operation(
+            summary = "Filter products by price range",
+            description = "Retrieve a paginated list of products within the specified minimum and maximum price range"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Products fetched successfully",
+                    content = @Content(schema = @Schema(implementation = ProductListResponseSchema.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "401",
+                    description = "Unauthorized",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseSchema.class))
+            ),
+    })
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping("/filter")
+    public ResponseEntity<ApiResponse<PagedResponse<ProductResponse>>> filterProducts(
+            @RequestParam BigDecimal minPrice,
+            @RequestParam BigDecimal maxPrice,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDIr
+    ) {
+        return ResponseEntity.ok(productService.filterProducts(minPrice, maxPrice, page, size, sortBy, sortDIr));
     }
 
     @Operation(

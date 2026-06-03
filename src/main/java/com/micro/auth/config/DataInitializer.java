@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 @Configuration
 public class DataInitializer {
@@ -40,15 +41,28 @@ public class DataInitializer {
             }
 
             if (productRepository.findByName("Wireless Mouse").isEmpty()) {
-                Product product = Product.builder()
-                        .name("Wireless Mouse")
-                        .description("Bluetooth rechargeable mouse")
-                        .price(BigDecimal.valueOf(799.00))
-                        .stock(25)
-                        .build();
-
-                productRepository.save(product);
-                System.out.println("Product created");
+                List<Product> products = List.of(
+                        Product.builder()
+                                .name("Wireless Mouse")
+                                .description("Bluetooth rechargeable mouse")
+                                .price(BigDecimal.valueOf(799.00))
+                                .stock(25)
+                                .build(),
+                        Product.builder()
+                                .name("Keyboard")
+                                .description("Keyboard")
+                                .price(BigDecimal.valueOf(299.00))
+                                .stock(10)
+                                .build(),
+                        Product.builder()
+                                .name("Monitor")
+                                .description("Monitor")
+                                .price(BigDecimal.valueOf(2999.00))
+                                .stock(5)
+                                .build()
+                );
+                products.forEach(p -> productRepository.save(p));
+                System.out.println("Products created");
             }
         };
     }
