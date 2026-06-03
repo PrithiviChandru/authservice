@@ -1,6 +1,6 @@
 #Server Port
 server:
-  port: 8080
+  port: ${PORT}
 
 #Database Credentials
 spring:
@@ -14,10 +14,10 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: create
+    show-sql: false
 
 #Token Properties
 jwt:
-  secret: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-  expiration: 1800000 # 30 mins
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}
