@@ -36,7 +36,7 @@ public class PaymentServiceImpl implements PaymentService {
         // check ownership (USER can pay only own order)
         User currentUser = (User) authentication.getPrincipal();
         boolean isAdmin = currentUser.getRole().name().equals("ADMIN");
-        if (!isAdmin && !order.getUser().getId().equals(currentUser.getId()))
+        if (!order.getUser().getId().equals(currentUser.getId()))
             throw ApiException.badRequest("You are not allowed to pay this order");
 
         // only CREATED orders can be paid

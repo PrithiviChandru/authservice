@@ -61,8 +61,8 @@ public class DataInitializer {
                                 .stock(5)
                                 .build()
                 );
-                products.forEach(p -> productRepository.save(p));
-                System.out.println("Products created");
+//                products.forEach(p -> productRepository.save(p));
+//                System.out.println("Products created");
             }
         };
     }

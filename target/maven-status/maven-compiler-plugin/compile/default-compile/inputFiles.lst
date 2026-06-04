@@ -56,6 +56,15 @@ D:\java\idea\microservices\authservice\src\main\java\com\micro\auth\service\impl
 D:\java\idea\microservices\authservice\src\main\java\com\micro\auth\service\UserService.java
 D:\java\idea\microservices\authservice\src\main\java\com\micro\auth\util\Utils.java
 D:\java\idea\microservices\authservice\src\main\java\com\micro\AuthServiceApplication.java
+D:\java\idea\microservices\authservice\src\main\java\com\micro\category\controller\CategoryController.java
+D:\java\idea\microservices\authservice\src\main\java\com\micro\category\dto\CategoryRequest.java
+D:\java\idea\microservices\authservice\src\main\java\com\micro\category\dto\CategoryResponse.java
+D:\java\idea\microservices\authservice\src\main\java\com\micro\category\entity\Category.java
+D:\java\idea\microservices\authservice\src\main\java\com\micro\category\repository\CategoryRepository.java
+D:\java\idea\microservices\authservice\src\main\java\com\micro\category\schema\CategoryListResponseSchema.java
+D:\java\idea\microservices\authservice\src\main\java\com\micro\category\schema\CategoryResponseSchema.java
+D:\java\idea\microservices\authservice\src\main\java\com\micro\category\service\CategoryService.java
+D:\java\idea\microservices\authservice\src\main\java\com\micro\category\service\impl\CategoryServiceImpl.java
 D:\java\idea\microservices\authservice\src\main\java\com\micro\order\controller\OrderController.java
 D:\java\idea\microservices\authservice\src\main\java\com\micro\order\dto\OrderRequest.java
 D:\java\idea\microservices\authservice\src\main\java\com\micro\order\dto\OrderResponse.java
