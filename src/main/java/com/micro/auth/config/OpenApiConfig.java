@@ -18,7 +18,7 @@ public class OpenApiConfig {
                 // Information Details
                 .info(new Info()
                         .title("Ecommerce Service API")
-                        .version("1.1.0")
+                        .version("1.2.0")
                         .description("Ecommerce service APIs")
                         .contact(new Contact()
                                 .name("pruthvi")
