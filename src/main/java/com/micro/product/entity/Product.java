@@ -1,5 +1,6 @@
 package com.micro.product.entity;
 
+import com.micro.category.entity.Category;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,12 +28,16 @@ public class Product {
 
     private String description;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
     private BigDecimal price;
 
     private Integer stock;
 
     @CreationTimestamp
-    @Column(nullable = false, unique = false)
+    @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
     @UpdateTimestamp
@@ -40,9 +45,7 @@ public class Product {
 
     @PrePersist
     public void onCreate() {
-        Instant ts = Instant.now();
-        this.createdAt = ts;
-        this.updatedAt = ts;
+        this.createdAt = Instant.now();
     }
 
     @PreUpdate
