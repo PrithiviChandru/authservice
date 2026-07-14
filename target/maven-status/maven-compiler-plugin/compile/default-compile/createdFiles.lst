@@ -39,6 +39,7 @@ com\micro\auth\schema\ErrorResponseSchema.class
 com\micro\payment\dto\PaymentResponse.class
 com\micro\order\service\impl\OrderServiceImpl.class
 com\micro\auth\schema\ForgotPasswordResponseSchema.class
+com\micro\auth\config\CorsConfig.class
 com\micro\auth\security\JwtService.class
 com\micro\auth\service\UserService.class
 com\micro\auth\enums\Role.class

@@ -32,7 +32,7 @@ public class AuthServiceApplication {
         System.out.println(System.getenv("MYSQL_ADDON_USER"));
         System.out.println(System.getenv("MYSQL_ADDON_PORT"));
         System.out.println(System.getenv("MYSQL_ADDON_PASSWORD"));
-        System.out.println(System.getenv("MYSQL_ADDON_URI"));
+        System.out.println(System.getenv("SPRING_PROFILES_ACTIVE"));
     }
 
     public static void main(String[] args) {
